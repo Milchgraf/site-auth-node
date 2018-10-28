@@ -6,9 +6,12 @@ const bodyParser = require('body-parser');
 const expressHandlebars = require('express-handlebars');
 const flash = require('connect-flash');
 const session = require('express-session');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(morgan('dev'));
+
+mongoose.connect('mongodb://localhost/site-auth-node', { useNewUrlParser: true });
 
 // View Engine
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +30,12 @@ app.use(session({
 }));
 
 app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success_messages = req.flash('success');
+  res.locals.error_messages = req.flash('error');
+  next();
+});
 
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
