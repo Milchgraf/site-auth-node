@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
+const passport = require('passport');
 
 const User = require('../models/user');
 
@@ -53,6 +54,17 @@ router.route('/register')
 router.route('/login')
   .get((req, res) => {
     res.render('login');
-  });
+  }).post(passport.authenticate('local', {
+    successRedirect: '/users/dashboard',
+    failureRedirect: '/users/login',
+    failureFlash: true
+  })
+);
+
+router.route('/dashboard')
+  .get((req, res) => {
+    res.render('dashboard');
+  }
+);
 
 module.exports = router;
